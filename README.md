@@ -1,21 +1,15 @@
-
 # File Searcher
 
 Этот проект реализует поиск файлов в указанной директории и её подкаталогах с использованием токенов отмены, событий и функции расширения для нахождения максимального элемента.
 
-## Класс `FileEventArgs`
+## Класс `FileFoundEventArgs`
 
-Класс `FileEventArgs` наследуется от `EventArgs` и содержит имя найденного файла.
+Класс `FileFoundEventArgs` наследуется от `EventArgs` и содержит имя найденного файла.
 
 ```csharp
-public class FileEventArgs : EventArgs
+public class FileFoundEventArgs(string FileName) : EventArgs
 {
-    public string FileName { get; }
-
-    public FileEventArgs(string fileName)
-    {
-        FileName = fileName;
-    }
+    public string FileName { get; } = FileName;
 }
 ```
 
@@ -25,7 +19,7 @@ public class FileEventArgs : EventArgs
 
 ### Событие `FileFound`
 
-Событие `FileFound` вызывается при нахождении каждого файла и передаёт аргументы типа `FileEventArgs`.
+Событие `FileFound` вызывается при нахождении каждого файла и передаёт аргументы типа `FileFoundEventArgs`.
 
 ### Метод `SearchFiles`
 
@@ -77,16 +71,16 @@ public static T GetMax<T>(this IEnumerable<T> collection, Func<T, float> convert
         throw new ArgumentException("Collection is empty or null.");
     }
 
-    T maxItem = null;
-    float maxValue = float.MinValue;
+    var maxItem = collection.First();
+    var maxValue = convertToNumber(maxItem);
 
     foreach (var item in collection)
     {
-        float value = convertToNumber(item);
+        var value = convertToNumber(item);
         if (value > maxValue)
         {
-            maxValue = value;
             maxItem = item;
+            maxValue = value;
         }
     }
 
@@ -97,4 +91,3 @@ public static T GetMax<T>(this IEnumerable<T> collection, Func<T, float> convert
 ## Пример использования
 
 В этом примере выводятся найденные файлы в консоль, производится отмена поиска после нахождения 15 файлов, а также используется метод `GetMax` для нахождения файла с максимальным размером.
-
